@@ -148,6 +148,19 @@
         justify-content: space-between !important;
         width: 100% !important;
         box-sizing: border-box !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+        background: #ffffff !important;
+    }
+
+    .dashboard .module table tr:last-child {
+        border-bottom: none !important;
+    }
+
+    /* Remove cell borders and default backgrounds to fix odd line snippets */
+    .dashboard .module table th,
+    .dashboard .module table td {
+        border: none !important;
+        background: transparent !important;
     }
 
     .dashboard .module table th {
@@ -160,7 +173,11 @@
         display: inline-flex !important;
         align-items: center !important;
         justify-content: flex-end !important;
-        padding: 10px 15px !important;
+        padding: 14px 10px !important;
+    }
+
+    .dashboard .module table td:last-child {
+        padding-right: 20px !important;
     }
 
     /* Action Links as Pill Badges */
