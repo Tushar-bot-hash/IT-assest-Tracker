@@ -9,14 +9,20 @@ services:
       - key: PYTHON_VERSION
         value: 3.10.13
       - key: DATABASE_URL
-        sync: false  # Paste your existing Render PostgreSQL connection string here
+        fromDatabase:
+          name: it-hr-asset-tracker-db
+          property: connectionString
       - key: SECRET_KEY
         generateValue: true
       - key: DEBUG
         value: "False"
       - key: FRONTEND_URL
-        sync: false  # Set to your Vercel URL
+        sync: false  # User will set this to their Vercel URL after deployment
       - key: JWT_AUTH_SECURE
         value: "True"
       - key: CSRF_COOKIE_SECURE
         value: "True"
+
+databases:
+  - name: it-hr-asset-tracker-db
+    plan: free
