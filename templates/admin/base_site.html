@@ -91,13 +91,17 @@
 
     .module caption, .module h2 {
         background: #f8fafc !important;
-        color: #0f2d1e !important;
-        font-weight: 700 !important;
         border-bottom: 1px solid #f1f5f9 !important;
-        padding: 12px 18px !important;
+        padding: 14px 20px !important;
         font-size: 14px !important;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+    }
+
+    .module caption a, .module h2 a {
+        color: #064e3b !important;
+        font-weight: 800 !important;
+        text-decoration: none !important;
     }
 
     .module td, .module th {
@@ -113,16 +117,97 @@
         font-weight: 600 !important;
     }
 
-    tr.row1 {
-        background: #ffffff !important;
+    /* Fix dark mode / alternating row background issues */
+    .module table tbody tr, tr.row1, tr.row2, tr.alt {
+        background-color: #ffffff !important;
+        color: #1e293b !important;
+    }
+    
+    .module table tbody tr:nth-child(even), tr.row2, tr.alt {
+        background-color: #f8fafc !important;
+    }
+    
+    .module table tbody tr:hover {
+        background-color: #f0fdf4 !important;
     }
 
-    tr.row2 {
-        background: #f8fafc !important;
+    .module table th a {
+        color: #064e3b !important;
+        font-weight: 600 !important;
+        text-decoration: none !important;
     }
 
-    tr:hover {
-        background: #f0fdf4 !important; /* Soft green hover row */
+    .module table th a:hover {
+        color: #ea580c !important;
+    }
+
+    /* Dashboard Layout Alignments */
+    .dashboard .module table tr {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .dashboard .module table th {
+        flex: 1 !important;
+        text-align: left !important;
+        padding: 14px 20px !important;
+    }
+
+    .dashboard .module table td {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        padding: 10px 15px !important;
+    }
+
+    /* Action Links as Pill Badges */
+    a.addlink, a.changelink, a.viewlink {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        font-weight: 600 !important;
+        font-size: 12px !important;
+        text-decoration: none !important;
+        padding: 6px 12px !important;
+        border-radius: 6px !important;
+        transition: all 0.15s ease !important;
+        border: 1px solid transparent !important;
+    }
+
+    a.addlink {
+        background: #f0fdf4 !important;
+        color: #16a34a !important;
+        border-color: #bbf7d0 !important;
+    }
+    a.addlink:hover {
+        background: #16a34a !important;
+        color: #ffffff !important;
+        transform: translateY(-1px) !important;
+    }
+
+    a.changelink {
+        background: #fff7ed !important;
+        color: #ea580c !important;
+        border-color: #ffedd5 !important;
+    }
+    a.changelink:hover {
+        background: #ea580c !important;
+        color: #ffffff !important;
+        transform: translateY(-1px) !important;
+    }
+
+    a.viewlink {
+        background: #f0f9ff !important;
+        color: #0284c7 !important;
+        border-color: #e0f2fe !important;
+    }
+    a.viewlink:hover {
+        background: #0284c7 !important;
+        color: #ffffff !important;
+        transform: translateY(-1px) !important;
     }
 
     /* Buttons styling */
