@@ -1,4 +1,5 @@
 import os
+import dj_database_url
 from pathlib import Path
 from datetime import timedelta
 
@@ -30,6 +31,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',  # CORS middleware above CommonMiddleware
     'django.middleware.common.CommonMiddleware',
@@ -58,9 +60,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-# Database
-# Default: SQLite for local development
-# Set USE_POSTGRES=True env var to switch to PostgreSQL
+# Database configuration (prefers Render DATABASE_URL, then Postgres, then SQLite)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -68,7 +68,13 @@ DATABASES = {
     }
 }
 
-if os.environ.get('USE_POSTGRES', 'False') == 'True':
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+elif os.environ.get('USE_POSTGRES', 'False') == 'True':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -102,18 +108,26 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files
+# Static files (WhiteNoise setup)
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom User Model
 AUTH_USER_MODEL = 'tracker.CustomUser'
 
+# Check if running in production (e.g. on Render)
+IS_PRODUCTION = not DEBUG or 'RENDER' in os.environ
+
 # CORS Config
+FRONTEND_URL = os.environ.get('FRONTEND_URL')
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://127.0.0.1:5173',
 ]
+if FRONTEND_URL:
+    CORS_ALLOWED_ORIGINS.append(FRONTEND_URL)
 CORS_ALLOW_CREDENTIALS = True
 
 # CSRF Config
@@ -121,20 +135,24 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:5173',
     'http://127.0.0.1:5173',
 ]
+if FRONTEND_URL:
+    # CSRF trusted origin must have the scheme (e.g. https://...)
+    CSRF_TRUSTED_ORIGINS.append(FRONTEND_URL)
+
 CSRF_COOKIE_NAME = 'csrftoken'
-CSRF_COOKIE_SAMESITE = 'Lax'      # Lax required for cross-port dev (5173->8000)
-SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'None' if IS_PRODUCTION else 'Lax'
+SESSION_COOKIE_SAMESITE = 'None' if IS_PRODUCTION else 'Lax'
 CSRF_COOKIE_HTTPONLY = False       # Frontend must read it to send X-CSRFToken header
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 
 # Secure Cookies for Session & Auth
-CSRF_COOKIE_SECURE = False         # Set to True in production (HTTPS only)
-SESSION_COOKIE_SECURE = False      # Set to True in production
+CSRF_COOKIE_SECURE = IS_PRODUCTION
+SESSION_COOKIE_SECURE = IS_PRODUCTION
 JWT_AUTH_COOKIE = 'access_token'
 JWT_AUTH_REFRESH_COOKIE = 'refresh_token'
-JWT_AUTH_SECURE = False            # Set to True in production
+JWT_AUTH_SECURE = IS_PRODUCTION
 JWT_AUTH_HTTPONLY = True
-JWT_AUTH_SAMESITE = 'Lax'         # Lax allows cross-port dev requests
+JWT_AUTH_SAMESITE = 'None' if IS_PRODUCTION else 'Lax'
 
 # Django REST Framework Settings
 REST_FRAMEWORK = {
